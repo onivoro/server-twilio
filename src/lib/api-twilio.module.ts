@@ -7,6 +7,10 @@ import { Twilio } from 'twilio';
 @Module({})
 export class ServerTwilioModule {
   static configure(config: ServerTwilioConfig) {
+    const twilio = new Twilio(
+      config.TWILIO_ACCOUNT_SID,
+      config.TWILIO_AUTH_TOKEN,
+    );
     return moduleFactory({
       module: ServerTwilioModule,
       providers: [
@@ -14,11 +18,12 @@ export class ServerTwilioModule {
           provide: TwilioService,
           useFactory: () => new TwilioService(
             config,
-            new Twilio(
-              config.TWILIO_ACCOUNT_SID,
-              config.TWILIO_AUTH_TOKEN,
-            )
+            twilio
           )
+        },
+        {
+          provide: Twilio,
+          useValue: twilio
         }
       ]
     });
